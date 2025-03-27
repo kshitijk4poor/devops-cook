@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.middleware.logging import add_logging_middleware
 from app.routes import health, demo
 
 
@@ -21,6 +22,9 @@ def create_application() -> FastAPI:
         version=settings.VERSION,
         debug=settings.DEBUG,
     )
+    
+    # Add logging middleware
+    add_logging_middleware(application)
     
     # Configure CORS
     application.add_middleware(
