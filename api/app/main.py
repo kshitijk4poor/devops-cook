@@ -2,9 +2,11 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import make_asgi_app
 
 from app.core.config import settings
 from app.middleware.logging import add_logging_middleware
+from app.middleware.metrics import PrometheusMiddleware
 from app.routes import health, demo
 
 
@@ -25,6 +27,13 @@ def create_application() -> FastAPI:
     
     # Add logging middleware
     add_logging_middleware(application)
+    
+    # Add Prometheus middleware
+    application.add_middleware(PrometheusMiddleware)
+    
+    # Mount Prometheus metrics endpoint
+    metrics_app = make_asgi_app()
+    application.mount("/metrics", metrics_app)
     
     # Configure CORS
     application.add_middleware(
