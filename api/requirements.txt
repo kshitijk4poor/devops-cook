@@ -5,4 +5,8 @@ pydantic-settings==2.0.3
 python-dotenv==1.0.0
 pytest==7.4.3
 httpx==0.25.1
-prometheus-client==0.19.0
+prometheus-client
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-exporter-jaeger
