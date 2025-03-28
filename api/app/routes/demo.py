@@ -7,9 +7,10 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 import httpx
-from fastapi import APIRouter, HTTPException, status, Query
+from fastapi import APIRouter, HTTPException, status, Query, Request
 from pydantic import BaseModel
 from opentelemetry import trace
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 from app.utils.tracing import traced_http_request
 
 # Create router
@@ -17,6 +18,10 @@ router = APIRouter(tags=["Demo"], prefix="/demo")
 
 # Get tracer
 tracer = trace.get_tracer(__name__)
+
+# Create propagator for distributed tracing
+propagator = TraceContextTextMapPropagator()
+inject = propagator.inject  # For use in context propagation
 
 
 class DemoResponse(BaseModel):
@@ -26,6 +31,49 @@ class DemoResponse(BaseModel):
     timestamp: datetime
     endpoint_type: str
     data: Dict[str, Any] = {}
+
+
+class EchoRequest(BaseModel):
+    """Request model for the echo endpoint."""
+    message: str
+    timestamp: Optional[float] = None
+    data: Dict[str, Any] = {}
+
+
+@router.post(
+    "/echo",
+    status_code=status.HTTP_200_OK,
+    summary="Echo Endpoint",
+    description="Echoes back the JSON payload sent to it.",
+)
+async def echo_endpoint(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Echo endpoint that returns the JSON payload sent to it.
+    
+    Args:
+        payload: The JSON payload to echo back
+        
+    Returns:
+        Dict[str, Any]: The JSON payload sent to the endpoint
+    """
+    # Start a span for processing the echo request
+    with tracer.start_as_current_span("echo_request_processing") as span:
+        span.set_attribute("endpoint_type", "echo")
+        span.set_attribute("business.importance", "low")
+        
+        # Add payload info to span
+        if "message" in payload:
+            span.set_attribute("echo.message", str(payload["message"]))
+        if "timestamp" in payload:
+            span.set_attribute("echo.timestamp", str(payload["timestamp"]))
+        
+        # Add an event to mark successful processing
+        span.add_event("echo_processing_completed", {
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        # Return the payload as-is
+        return payload
 
 
 @router.get(

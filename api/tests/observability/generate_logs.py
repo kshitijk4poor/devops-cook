@@ -7,11 +7,12 @@ def generate_logs(base_url, count=100, delay=0.1):
     """Generate sample logs by making API requests."""
     print(f"Generating {count} log entries...")
     
+    # Include all working endpoints
     endpoints = [
         "/health",
         "/demo/random",
         "/demo/metrics",
-        "/demo/echo"
+        "/demo/data-echo"  # Use the new data-echo endpoint
     ]
     
     error_endpoints = [
@@ -26,17 +27,23 @@ def generate_logs(base_url, count=100, delay=0.1):
             params = {"force_error": True} if endpoint == "/demo/error-prone" else {}
             try:
                 response = requests.get(f"{base_url}{endpoint}", params=params, timeout=2)
-            except requests.exceptions.RequestException:
-                print(f"Error request made to {endpoint}")
+                print(f"Error request made to {endpoint} - Status: {response.status_code}")
+            except requests.exceptions.RequestException as e:
+                print(f"Error request made to {endpoint} - Exception: {str(e)[:50]}...")
         else:
             endpoint = random.choice(endpoints)
-            if endpoint == "/demo/echo":
-                data = {"message": f"Test message {i}", "timestamp": time.time()}
-                response = requests.post(f"{base_url}{endpoint}", json=data, timeout=2)
+            if endpoint == "/demo/data-echo":
+                try:
+                    response = requests.post(f"{base_url}{endpoint}", timeout=2)
+                    print(f"POST request to {endpoint} - Status: {response.status_code}")
+                except requests.exceptions.RequestException as e:
+                    print(f"Failed POST request to {endpoint} - Exception: {str(e)[:50]}...")
             else:
-                response = requests.get(f"{base_url}{endpoint}", timeout=2)
-                
-            print(f"Request to {endpoint} - Status: {response.status_code}")
+                try:
+                    response = requests.get(f"{base_url}{endpoint}", timeout=2)
+                    print(f"GET request to {endpoint} - Status: {response.status_code}")
+                except requests.exceptions.RequestException as e:
+                    print(f"Failed GET request to {endpoint} - Exception: {str(e)[:50]}...")
             
         # Add a small delay between requests
         time.sleep(delay)
@@ -50,4 +57,4 @@ if __name__ == "__main__":
     parser.add_argument('--delay', type=float, default=0.1, help='Delay between requests in seconds')
     
     args = parser.parse_args()
-    generate_logs(args.url, args.count, args.delay) 
+    generate_logs(args.url, args.count, args.delay)

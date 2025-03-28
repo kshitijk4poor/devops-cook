@@ -1,0 +1,26 @@
+```mermaid
+graph TD
+    Users(Users) --> FastAPI(FastAPI Backend)
+    
+    FastAPI --> Prometheus(Prometheus<br>Metrics)
+    FastAPI --> Jaeger(Jaeger<br>Tracing)
+    FastAPI --> Logstash(Logstash<br>Logging)
+    
+    Prometheus --> Grafana(Grafana<br>Visualization)
+    Logstash --> Elasticsearch(Elasticsearch<br>Storage)
+    Elasticsearch --> Kibana(Kibana<br>Analysis)
+    Jaeger --> Kibana
+    
+    classDef main fill:#f96,stroke:#333,stroke-width:2px;
+    classDef metrics fill:#9cf,stroke:#333,stroke-width:1px;
+    classDef tracing fill:#fcf,stroke:#333,stroke-width:1px;
+    classDef logging fill:#cfc,stroke:#333,stroke-width:1px;
+    classDef viz fill:#ff9,stroke:#333,stroke-width:1px;
+    
+    class Users main;
+    class FastAPI main;
+    class Prometheus,Grafana metrics;
+    class Jaeger tracing;
+    class Logstash,Elasticsearch,Kibana logging;
+    class Grafana,Kibana viz;
+``` 

@@ -12,6 +12,31 @@ services:
       retries: 3
     depends_on:
       - logstash
+      - jaeger
+    environment:
+      - JAEGER_HOST=jaeger
+      - JAEGER_PORT=6831
+      - OTEL_TRACES_ENABLED=true
+      - OTEL_SAMPLER=always_on
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=9411
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:16686"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
   prometheus:
     image: prom/prometheus:latest

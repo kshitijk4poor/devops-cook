@@ -1,0 +1,32 @@
+```mermaid
+graph TD
+    subgraph "Kibana Log Explorer"
+        subgraph "Search"
+            SearchBar["level:ERROR OR response_time:>500"]
+            TimeRange["Time Range: Last 15 minutes"]
+        end
+        
+        subgraph "Log Entries"
+            Error1["2023-03-27T12:35:43 ERROR api<br>Connection timeout for database query<br>trace_id: 67d4bde511f84f1488ea608c27afb093<br>req.url: /demo/items/42"]
+            
+            Warning["2023-03-27T12:34:21 WARN api<br>Slow response detected<br>trace_id: 8d7a6f4e29e7b30c1dd5a6e9f5b4c3a2<br>req.url: /demo/items<br>response_time: 785ms"]
+            
+            Error2["2023-03-27T12:32:15 ERROR api<br>Invalid request parameters<br>trace_id: 5e4c3b2a1d0f9e8d7c6b5a4f3e2d1c0b<br>req.url: /demo/items<br>error.message: Required field 'name' is missing"]
+        end
+        
+        subgraph "Visualization"
+            ErrorChart["Error logs over time
+            Spike at 12:20 - 12:30"]
+        end
+    end
+    
+    classDef search fill:#eef,stroke:#99c,stroke-width:1px;
+    classDef error fill:#fee,stroke:#c99,stroke-width:1px;
+    classDef warning fill:#ffe,stroke:#cc9,stroke-width:1px;
+    classDef chart fill:#efe,stroke:#9c9,stroke-width:1px;
+    
+    class SearchBar,TimeRange search;
+    class Error1,Error2 error;
+    class Warning warning;
+    class ErrorChart chart;
+``` 

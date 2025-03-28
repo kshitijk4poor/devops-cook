@@ -1,0 +1,30 @@
+```mermaid
+graph TD
+    subgraph "API Overview Dashboard"
+        subgraph "Key Metrics"
+            direction LR
+            RequestRate["Request Rate<br>45 req/s"] 
+            ErrorRate["Error Rate<br>2.3%"]
+            ActiveUsers["Active Users<br>123"]
+        end
+        
+        subgraph "Time-Based Metrics"
+            direction LR
+            ResponseTime["Response Time (ms)<br>p99: 350ms<br>p95: 120ms<br>p50: 45ms"]
+            StatusCodes["HTTP Status Codes<br>2xx: 97%<br>3xx: 0%<br>4xx: 2%<br>5xx: 1%"]
+        end
+        
+        subgraph "Top Endpoints by Request Count"
+            direction TB
+            TopEndpoints["1. GET /demo/items - 35%<br>2. GET /demo/items/{id} - 20%<br>3. POST /demo/items - 15%<br>4. DELETE /demo/items/{id} - 10%<br>5. GET /metrics - 10%<br>6. GET /health - 10%"]
+        end
+    end
+    
+    classDef dashboard fill:#f9f9f9,stroke:#333,stroke-width:1px;
+    classDef panel fill:#fff,stroke:#ddd,stroke-width:1px;
+    classDef metric fill:#eef,stroke:#ccc,stroke-width:1px;
+    
+    class "API Overview Dashboard" dashboard;
+    class "Key Metrics","Time-Based Metrics","Top Endpoints by Request Count" panel;
+    class RequestRate,ErrorRate,ActiveUsers,ResponseTime,StatusCodes,TopEndpoints metric;
+``` 

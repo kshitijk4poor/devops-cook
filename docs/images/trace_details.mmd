@@ -1,0 +1,22 @@
+```mermaid
+classDiagram
+    class "Span Details: fetch_item" {
+        +Duration: 180ms
+        +TraceID: 67d4bde511f84f1488ea608c27afb093
+    }
+    
+    class Tags {
+        +component: api
+        +item.id: 42
+        +db.type: mock_database
+    }
+    
+    class Logs {
+        +12:34:56.789: Fetching item with id=42
+        +12:34:56.850: Executing database query
+        +12:34:57.001: Database returned result
+    }
+    
+    "Span Details: fetch_item" --> Tags : contains
+    "Span Details: fetch_item" --> Logs : contains
+``` 

@@ -14,3 +14,17 @@
 *.pyzw
 venv/
 __pycache__/
+.pytest_cache/
+.venv/
+.env
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+*.egg-info/
+dist/
+build/
+results/
+.coverage
+htmlcov/

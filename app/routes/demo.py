@@ -50,20 +50,29 @@ async def get_metrics():
     return metrics
 
 @router.post("/echo")
-async def echo(request: Request):
+async def echo(payload: dict):
     """Echo back the JSON payload."""
     request_id = get_request_id()
     logger = bind_request_context(get_logger("app.demo"), request_id)
     
     logger.info("Received echo request", request_id=request_id)
+    logger.info("Echo payload", payload=payload, request_id=request_id)
+    return payload
+
+@router.post("/data-echo")
+async def data_echo():
+    """Echo back a simple fixed response."""
+    request_id = get_request_id()
+    logger = bind_request_context(get_logger("app.demo"), request_id)
     
-    try:
-        payload = await request.json()
-        logger.info("Echo payload", payload=payload, request_id=request_id)
-        return payload
-    except Exception as e:
-        logger.error("Failed to parse JSON payload", error=str(e), request_id=request_id)
-        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+    logger.info("Received data-echo request", request_id=request_id)
+    
+    # Return a fixed response that doesn't require parsing request body
+    return {
+        "message": "This is a test echo response",
+        "timestamp": time.time(),
+        "status": "success"
+    }
 
 @router.get("/external/{error}")
 @router.post("/external/{error}")

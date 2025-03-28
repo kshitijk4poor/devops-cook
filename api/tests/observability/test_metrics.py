@@ -42,7 +42,7 @@ def test_error_prone_endpoint_metrics():
     
     for _ in range(20):  # Increased to ensure we get both cases
         try:
-            response = client.get("/demo/error-prone")
+            response = client.get("/demo/simple-error")
             if response.status_code == 200:
                 success_count += 1
         except (httpx.HTTPError, ValueError, RuntimeError):
@@ -54,12 +54,12 @@ def test_error_prone_endpoint_metrics():
     # Check metrics
     metrics = client.get("/metrics").text
     assert "error_count_total" in metrics
-    assert 'http_requests_total{endpoint="/demo/error-prone"' in metrics
+    assert 'http_requests_total{endpoint="/demo/simple-error"' in metrics
 
 def test_external_endpoint_metrics():
     """Test metrics for external-dependent endpoint"""
     # Make request to external endpoint
-    response = client.get("/demo/external")
+    response = client.get("/demo/external/false")
     assert response.status_code == 200
     
     # Check metrics

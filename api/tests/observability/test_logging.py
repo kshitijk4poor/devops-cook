@@ -66,7 +66,7 @@ def test_request_logging(caplog):
 def test_error_logging(caplog):
     """Test that errors are properly logged with stack traces."""
     try:
-        response = client.get("/demo/error-prone", params={"force_error": True})
+        response = client.get("/demo/simple-error", params={"force_error": True})
     except Exception:
         pass  # We expect this to fail
 
@@ -97,7 +97,7 @@ def test_sensitive_data_filtering(caplog):
     }
 
     try:
-        response = client.post("/demo/error-prone", json=sensitive_data)
+        response = client.post("/demo/echo", json=sensitive_data)
     except Exception:
         pass  # We don't care about the response, only the logs
 

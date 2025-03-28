@@ -1,0 +1,21 @@
+```mermaid
+gantt
+    title Jaeger Trace View: 67d4bde511f84f1488ea608c27afb093 (300ms total)
+    dateFormat  YYYY-MM-DD
+    axisFormat %M:%S.%L
+    
+    section GET /demo/items/42
+    API Request                       :api, 2023-01-01, 300ms
+    
+    section Child Spans
+    validate_request                  :validate, after api, 20ms
+    fetch_item                        :fetch, after validate, 180ms
+    process_item                      :process, after fetch, 40ms
+    format_response                   :format, after process, 30ms
+    
+    section Nested Spans
+    database_query                    :db, after validate, 150ms
+    
+    %% Styling
+    %% (Not fully supported in standard Mermaid, but included for reference)
+``` 
