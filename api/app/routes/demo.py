@@ -3,7 +3,7 @@
 import asyncio
 import random
 import time
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Dict, Any, Optional
 
 import httpx
@@ -69,7 +69,7 @@ async def echo_endpoint(payload: Dict[str, Any]) -> Dict[str, Any]:
         
         # Add an event to mark successful processing
         span.add_event("echo_processing_completed", {
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         })
         
         # Return the payload as-is
@@ -100,7 +100,7 @@ async def normal_endpoint() -> DemoResponse:
         
         # Add an event to mark processing start
         span.add_event("processing_started", {
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         })
         
         # Simulate minimal processing
@@ -108,13 +108,13 @@ async def normal_endpoint() -> DemoResponse:
         
         # Add an event to mark processing completion
         span.add_event("processing_completed", {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "duration_ms": 5
         })
     
     return DemoResponse(
         message="This is a normal endpoint with standard response time",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         endpoint_type="normal",
         data={"processing_time_ms": 5},
     )
@@ -157,7 +157,7 @@ async def slow_endpoint(
         
         # Add event for request received
         main_span.add_event("request_received", {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "params": {
                 "delay_min": delay_min,
                 "delay_max": delay_max,
@@ -180,7 +180,7 @@ async def slow_endpoint(
             
             # Add event for query start
             span.add_event("db_query_started", {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "estimated_duration_seconds": delay_seconds
             })
             
@@ -193,7 +193,7 @@ async def slow_endpoint(
             
             # Add event for query completion
             span.add_event("db_query_completed", {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "records_fetched": records_fetched,
                 "query_complexity": query_complexity
             })
@@ -209,7 +209,7 @@ async def slow_endpoint(
                 
                 # Add event for processing start
                 proc_span.add_event("processing_started", {
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 })
                 
                 # Simulate processing delay
@@ -218,7 +218,7 @@ async def slow_endpoint(
                 
                 # Add event for processing completion
                 proc_span.add_event("processing_completed", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "duration_seconds": process_time
                 })
                 
@@ -227,13 +227,13 @@ async def slow_endpoint(
         
         # Add final event for request completion
         main_span.add_event("request_completed", {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "total_duration_seconds": delay_seconds + (delay_seconds * 0.1 if simulate_processing else 0)
         })
     
     return DemoResponse(
         message="This is a slow endpoint simulating database delay",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         endpoint_type="slow",
         data={
             "processing_time_ms": delay_seconds * 1000,
@@ -281,7 +281,7 @@ async def error_prone_endpoint(
         
         # Add event for operation start
         span.add_event("operation_started", {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "configuration": {
                 "error_probability": error_probability,
                 "error_type": error_type
@@ -297,7 +297,7 @@ async def error_prone_endpoint(
         if should_error:
             # Record pre-error state
             span.add_event("error_condition_detected", {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "random_value": random.random(),
                 "threshold": error_probability
             })
@@ -330,7 +330,7 @@ async def error_prone_endpoint(
             
             # Add a detailed error event
             span.add_event("error_occurred", {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "error_type": exception_type,
                 "error_message": error_msg,
                 "status_code": status_code
@@ -345,13 +345,13 @@ async def error_prone_endpoint(
         # Operation was successful
         span.set_status(trace.Status(trace.StatusCode.OK))
         span.add_event("operation_completed", {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "result": "success"
         })
     
     return DemoResponse(
         message="This is an error-prone endpoint that successfully responded",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         endpoint_type="error-prone",
         data={
             "error_probability": error_probability,
@@ -404,7 +404,7 @@ async def external_dependent_endpoint(
         
         # Add event for operation start
         main_span.add_event("external_operation_started", {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "configuration": {
                 "service_url": service_url,
                 "timeout_seconds": timeout_seconds,
@@ -414,7 +414,7 @@ async def external_dependent_endpoint(
         })
         
         # Prepare for the external service request
-        start_time = datetime.utcnow()
+        start_time = datetime.now(UTC)
         
         # Create a nested span for the external service request
         with tracer.start_as_current_span("external_service_request") as span:
@@ -436,7 +436,7 @@ async def external_dependent_endpoint(
             
             # Add event for request preparation
             span.add_event("external_request_prepared", {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "headers": str(custom_headers)
             })
             
@@ -444,7 +444,7 @@ async def external_dependent_endpoint(
                 if use_traced_client:
                     # Use our traced HTTP client with span attributes
                     span.add_event("using_traced_client", {
-                        "timestamp": datetime.utcnow().isoformat()
+                        "timestamp": datetime.now(UTC).isoformat()
                     })
                     
                     # Add detailed business attributes for the traced request
@@ -469,7 +469,7 @@ async def external_dependent_endpoint(
                 else:
                     # Use the regular HTTP client but still maintain some tracing
                     span.add_event("using_standard_client", {
-                        "timestamp": datetime.utcnow().isoformat()
+                        "timestamp": datetime.now(UTC).isoformat()
                     })
                     
                     # Create sub-span for the regular client request
@@ -485,7 +485,7 @@ async def external_dependent_endpoint(
                             response_data = response.json()
                 
                 # Calculate response time
-                end_time = datetime.utcnow()
+                end_time = datetime.now(UTC)
                 processing_time_ms = (end_time - start_time).total_seconds() * 1000
                 
                 # Add response attributes to the request span
@@ -507,14 +507,14 @@ async def external_dependent_endpoint(
                 
                 # Add completion event to main span
                 main_span.add_event("external_operation_completed", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "success": True,
                     "total_duration_ms": processing_time_ms
                 })
                 
                 return DemoResponse(
                     message="Successfully called external service",
-                    timestamp=datetime.utcnow(),
+                    timestamp=datetime.now(UTC),
                     endpoint_type="external-dependent",
                     data={
                         "external_service": service_url.split("//")[1].split("/")[0],
@@ -526,7 +526,7 @@ async def external_dependent_endpoint(
                 
             except httpx.TimeoutException as e:
                 # Handle timeout error with detailed tracing
-                end_time = datetime.utcnow()
+                end_time = datetime.now(UTC)
                 error_time_ms = (end_time - start_time).total_seconds() * 1000
                 
                 # Record exception in span
@@ -538,7 +538,7 @@ async def external_dependent_endpoint(
                 
                 # Add error event with details
                 span.add_event("external_service_timeout", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "timeout_setting_seconds": timeout_seconds,
                     "elapsed_ms": error_time_ms
                 })
@@ -550,7 +550,7 @@ async def external_dependent_endpoint(
                 
                 # Add error completion event to main span
                 main_span.add_event("external_operation_error", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "error_type": "timeout",
                     "error_message": str(e),
                     "total_duration_ms": error_time_ms
@@ -563,7 +563,7 @@ async def external_dependent_endpoint(
                 
             except httpx.HTTPStatusError as e:
                 # Handle HTTP error status with detailed tracing
-                end_time = datetime.utcnow()
+                end_time = datetime.now(UTC)
                 error_time_ms = (end_time - start_time).total_seconds() * 1000
                 
                 # Record exception in span
@@ -575,7 +575,7 @@ async def external_dependent_endpoint(
                 
                 # Add error event with details
                 span.add_event("external_service_http_error", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "status_code": e.response.status_code,
                     "response_text": e.response.text,
                     "elapsed_ms": error_time_ms
@@ -589,7 +589,7 @@ async def external_dependent_endpoint(
                 
                 # Add error completion event to main span
                 main_span.add_event("external_operation_error", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "error_type": "http_status",
                     "status_code": e.response.status_code,
                     "error_message": str(e),
@@ -603,7 +603,7 @@ async def external_dependent_endpoint(
                 
             except Exception as e:
                 # Handle unexpected errors with detailed tracing
-                end_time = datetime.utcnow()
+                end_time = datetime.now(UTC)
                 error_time_ms = (end_time - start_time).total_seconds() * 1000
                 
                 # Record exception in span
@@ -614,7 +614,7 @@ async def external_dependent_endpoint(
                 
                 # Add error event with details
                 span.add_event("external_service_unexpected_error", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "error_type": type(e).__name__,
                     "elapsed_ms": error_time_ms
                 })
@@ -627,7 +627,7 @@ async def external_dependent_endpoint(
                 
                 # Add error completion event to main span
                 main_span.add_event("external_operation_error", {
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "error_type": "unexpected",
                     "error_class": type(e).__name__,
                     "error_message": str(e),
@@ -673,7 +673,7 @@ async def trace_demo_endpoint(
         
         if add_events:
             parent_span.add_event("operation_started", {
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "parameters": {
                     "sleep_time": sleep_time,
                     "add_child_spans": add_child_spans,
@@ -711,7 +711,7 @@ async def trace_demo_endpoint(
     
     return DemoResponse(
         message="Trace demo completed successfully",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         endpoint_type="trace-demo",
         data={
             "processing_time_ms": total_duration,

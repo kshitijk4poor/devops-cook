@@ -27,6 +27,9 @@ def setup_tracing(app: FastAPI, service_name: str = "api-service", excluded_endp
     if excluded_endpoints is None:
         excluded_endpoints = ["/metrics", "/health"]
     
+    # Convert excluded_endpoints list to comma-separated string for FastAPIInstrumentor
+    excluded_urls = ",".join(excluded_endpoints) if excluded_endpoints else ""
+    
     # Get Jaeger configuration from environment variables
     jaeger_host = os.getenv("JAEGER_HOST", "localhost")
     jaeger_port = int(os.getenv("JAEGER_PORT", 6831))
@@ -55,10 +58,10 @@ def setup_tracing(app: FastAPI, service_name: str = "api-service", excluded_endp
     # Add span processor to the tracer provider
     provider.add_span_processor(BatchSpanProcessor(jaeger_exporter))
     
-    # Instrument FastAPI
+    # Instrument FastAPI with excluded_urls as a string
     FastAPIInstrumentor.instrument_app(
         app,
-        excluded_urls=excluded_endpoints,
+        excluded_urls=excluded_urls,
         tracer_provider=provider,
     )
     

@@ -1,28 +1,34 @@
 """Tests for the health check endpoint."""
 
-from fastapi.testclient import TestClient
+from datetime import datetime, timedelta, UTC
 import pytest
-from datetime import datetime
+from fastapi.testclient import TestClient
 
 from app.main import app
 
 
-client = TestClient(app)
+@pytest.fixture
+def client():
+    return TestClient(app)
 
 
-def test_health_check():
-    """Test that the health check endpoint returns the expected response."""
+def test_health_check(client):
+    """
+    Test that the health check endpoint returns a 200 response with the expected format.
+    """
     response = client.get("/api/health")
     
-    # Check status code
+    # Check response status
     assert response.status_code == 200
     
-    # Check response data
+    # Check response body
     data = response.json()
     assert data["status"] == "healthy"
-    assert data["version"] == "0.1.0"
+    assert "version" in data
     assert "timestamp" in data
+    assert "hostname" in data
+    assert "environment" in data
     
-    # Optional: Verify timestamp is recent
+    # Verify timestamp is recent
     timestamp = datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
-    assert (datetime.utcnow() - timestamp).total_seconds() < 60  # Within the last minute
+    assert (datetime.now(UTC) - timestamp).total_seconds() < 60  # Within the last minute

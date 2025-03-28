@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    build: .
+    build: ./api
     ports:
       - "8001:8000"
     healthcheck:
