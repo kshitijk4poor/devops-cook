@@ -1,8 +1,17 @@
 # API Observability Platform Design Document
 
+## Table of Contents
+1. [System Architecture](#system-architecture)
+2. [Data Model](#data-model)
+3. [Design Decisions](#design-decisions-and-tradeoffs)
+4. [Implementation Details](#implementation-details)
+5. [Known Gaps](#known-gaps-and-justifications)
+6. [Conclusion](#conclusion)
+
 ## System Architecture
 
 ### High-Level System Diagram
+This diagram shows the major components and their interactions in the observability platform.
 
 ```mermaid
 graph TB
@@ -40,7 +49,8 @@ graph TB
     prom --> grafana
 ```
 
-### Detailed Component Interaction
+### Request Flow Sequence
+This diagram illustrates the detailed interaction between components during a request.
 
 ```mermaid
 sequenceDiagram
@@ -62,6 +72,80 @@ sequenceDiagram
     deactivate FastAPI
     OpenTelemetry->>Jaeger: End Trace
     deactivate OpenTelemetry
+```
+
+## Data Model
+
+### Entity Relationship Diagram
+This diagram shows the relationships between different data entities in the system.
+
+```mermaid
+erDiagram
+    API_REQUEST ||--o{ TRACE : generates
+    API_REQUEST ||--o{ METRIC : produces
+    API_REQUEST ||--o{ LOG : creates
+    
+    TRACE {
+        string trace_id
+        string parent_id
+        string span_id
+        timestamp start_time
+        timestamp end_time
+        string service_name
+        json attributes
+    }
+    
+    METRIC {
+        string name
+        string type
+        float value
+        timestamp timestamp
+        json labels
+    }
+    
+    LOG {
+        string log_id
+        timestamp timestamp
+        string level
+        string message
+        string trace_id
+        json metadata
+    }
+    
+    TRACE ||--o{ SPAN : contains
+    SPAN {
+        string span_id
+        string trace_id
+        string parent_span_id
+        string name
+        timestamp start_time
+        timestamp end_time
+        json attributes
+    }
+```
+
+### Data Storage Model
+This diagram shows how data is stored and accessed across different components.
+
+```mermaid
+graph LR
+    subgraph Storage
+        P[(Prometheus TSDB)]
+        E[(Elasticsearch)]
+        J[(Jaeger Storage)]
+    end
+    
+    subgraph Data Types
+        M[Metrics] --> P
+        L[Logs] --> E
+        T[Traces] --> J
+    end
+    
+    subgraph Access
+        G[Grafana] --> P
+        K[Kibana] --> E
+        JU[Jaeger UI] --> J
+    end
 ```
 
 ## Design Decisions and Tradeoffs
@@ -159,6 +243,7 @@ The solution provides:
 ## Implementation Details
 
 ### Data Flow
+This diagram shows how data flows through the system.
 
 ```mermaid
 flowchart LR
@@ -177,6 +262,7 @@ flowchart LR
 ```
 
 ### Monitoring Setup
+This diagram illustrates the monitoring components and their relationships.
 
 ```mermaid
 graph TD
@@ -200,4 +286,11 @@ This observability platform provides a comprehensive solution for monitoring, lo
 - Maintainability
 - Extensibility
 
-While there are some gaps, they are well-understood and can be addressed as needed. The core functionality provides robust observability capabilities suitable for most API deployments. 
+While there are some gaps, they are well-understood and can be addressed as needed. The core functionality provides robust observability capabilities suitable for most API deployments.
+
+## Documentation Links
+
+- **Architecture Diagrams**: Available in this document using Mermaid.js
+- **ER Diagram**: Available in the Data Model section using Mermaid.js
+- **Explanation Document**: This markdown file serves as the comprehensive documentation
+- **Source Code**: Available in the repository 

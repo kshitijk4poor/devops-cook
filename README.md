@@ -2,6 +2,16 @@
 
 This project demonstrates a comprehensive API observability solution using modern tools and techniques. It provides monitoring, logging, tracing, and visualization capabilities for a FastAPI application.
 
+## Documentation
+
+For detailed information about this platform, please refer to these documentation files:
+
+- **[API Documentation](API.md)**: Details on API endpoints, authentication, and usage examples
+- **[Observability Stack](OBSERVABILITY.md)**: Information about the metrics, logging, and tracing components
+- **[Dashboard Guide](DASHBOARD.md)**: Instructions for using and customizing dashboards
+- **[Security Configuration](SECURITY.md)**: Security best practices and configuration guides
+- **[Design Document](DESIGN.md)**: System architecture, data models, and design decisions
+
 ## Components
 
 - **FastAPI Application**: A demo API with various endpoints that simulate different scenarios
@@ -180,6 +190,8 @@ The API provides several endpoints to test observability features:
 - `/demo/simple-error`: Endpoint that can generate errors on demand
 - `/demo/external/{error}`: Simulates external API calls with optional errors
 
+For detailed API documentation including authentication, parameters, and response formats, see the [API Documentation](API.md).
+
 ## Future Considerations
 
 ### Unified Dashboarding
@@ -212,6 +224,7 @@ If any service fails to start:
 1. Check the logs: `docker-compose logs [service-name]`
 2. Verify port availability: `netstat -an | grep [port]`
 3. Check resource constraints (memory/CPU)
+4. See the [Security Configuration](SECURITY.md) guide for potential security-related issues
 
 #### Missing Data in Observability Tools
 
@@ -219,16 +232,27 @@ If any service fails to start:
    - Verify the API is running: `curl http://localhost:8001/health`
    - Check Prometheus targets: http://localhost:9091/targets
    - Verify scrape configuration in prometheus.yml
+   - Refer to the [Observability Stack](OBSERVABILITY.md) documentation for metrics setup
 
 2. **No logs in Kibana**:
    - Verify Logstash is receiving logs: `curl http://localhost:9600`
    - Check Elasticsearch indices: `curl http://localhost:9200/_cat/indices`
    - Generate test logs: `python tests/generate_logs.py --count 10`
+   - See the [Observability Stack](OBSERVABILITY.md) documentation for logging details
 
 3. **No traces in Jaeger**:
    - Verify Jaeger collector is running: `curl http://localhost:14268/`
    - Check environment variables for OpenTelemetry in docker-compose
    - Generate traffic with demo endpoints: `curl http://localhost:8001/demo/random`
+   - Consult the [Observability Stack](OBSERVABILITY.md) for tracing configuration
+
+#### Dashboard Issues
+
+If you're experiencing problems with dashboards:
+1. Verify all services are running properly
+2. Check data source connections in Grafana
+3. Ensure metrics are being collected properly
+4. Refer to the [Dashboard Guide](DASHBOARD.md) for dashboard setup and customization
 
 #### Container Modifications Not Taking Effect
 
@@ -303,4 +327,43 @@ Depending on your industry and location, consider:
 - Audit trail requirements
 - Data residency concerns
 
-By addressing these considerations, you can transform this demonstration environment into a production-ready observability platform suitable for critical applications. 
+By addressing these considerations, you can transform this demonstration environment into a production-ready observability platform suitable for critical applications.
+
+## Architecture Overview
+
+The API Observability Platform consists of several interconnected services:
+
+- **FastAPI Application**: The main application exposing REST endpoints
+- **Prometheus**: Time-series database for metrics collection and storage
+- **Grafana**: Visualization and dashboarding tool for metrics
+- **Jaeger**: Distributed tracing system for request flow analysis
+- **ELK Stack**: 
+  - Elasticsearch: Document store for logs and events
+  - Logstash: Log processing pipeline
+  - Kibana: Log visualization and search interface
+
+For a detailed architecture diagram and design decisions, see the [Design Document](DESIGN.md).
+
+When deploying this stack to production, consider:
+
+1. **Authentication & Authorization**:
+   - Secure all service UIs with strong authentication
+   - Use API keys or OAuth for service-to-service communication
+   - Implement role-based access control in Grafana and Kibana
+
+2. **Network Security**:
+   - Use a reverse proxy (e.g., Nginx, Traefik) with TLS
+   - Restrict internal services to private networks
+   - Configure appropriate firewall rules
+
+3. **Data Security**:
+   - Encrypt sensitive logs at rest
+   - Implement log redaction for PII/sensitive data
+   - Set up proper data retention policies
+
+4. **Scaling**:
+   - Configure Elasticsearch clustering for log volume
+   - Set up Prometheus federation for large metric collections
+   - Consider managed services for production deployments
+
+For comprehensive security configurations and best practices, refer to the [Security Configuration](SECURITY.md) document. 
