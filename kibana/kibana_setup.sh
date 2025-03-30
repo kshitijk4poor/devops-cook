@@ -74,9 +74,16 @@ curl -X POST "http://kibana:5601/api/saved_objects/dashboard/api-dashboard" \
   ]
 }'
 
-# Import dashboard if needed
-# curl -X POST "http://kibana:5601/api/saved_objects/_import" \
-#   -H 'kbn-xsrf: true' \
-#   --form file=@/usr/share/kibana/dashboards/api_logs.ndjson
+# Refresh Kibana to ensure changes are picked up
+echo "Refreshing Kibana index patterns..."
+curl -X POST "http://kibana:5601/api/saved_objects/index-pattern/fastapi-logs-*?overwrite=true" \
+  -H 'kbn-xsrf: true' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "attributes": {
+    "title": "fastapi-logs-*",
+    "timeFieldName": "@timestamp"
+  }
+}'
 
 echo "Kibana setup complete." 
