@@ -83,7 +83,7 @@ For detailed information about this platform, please refer to these documentatio
 ### Observability Components
 
 #### Prometheus Metrics Explorer
-![Prometheus UI](docs/images/prometheus-ui.png)
+![Prometheus UI](docs/images/prometheus.png)
 *Direct query interface for metrics using PromQL*
 
 #### Jaeger Distributed Tracing
