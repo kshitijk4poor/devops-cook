@@ -77,9 +77,6 @@ For detailed information about this platform, please refer to these documentatio
 *Detailed metrics for individual API endpoints with response times and error rates*
 
 #### Kibana Logs Dashboard
-![Kibana Logs Dashboard](docs/images/kibana-logs.png)
-*Log visualization with filtering and search capabilities*
-
 ![Kibana Dashboard](docs/images/kibana-dashboard.png)
 *Kibana dashboard with pre-built dashboards*
 
@@ -90,11 +87,11 @@ For detailed information about this platform, please refer to these documentatio
 *Direct query interface for metrics using PromQL*
 
 #### Jaeger Distributed Tracing
-![Jaeger Tracing UI](docs/images/jaeger-tracing-ui.png)
+![Jaeger Tracing UI](docs/images/jaeger.png)
 *Trace visualization showing request flow through system components*
 
 #### Kibana Log Explorer
-![Kibana Log Explorer](docs/images/kibana-log-explorer.png)
+![Kibana Logs Dashboard](docs/images/kibana-logs.png)
 *Detailed log analysis with advanced filtering options*
 
 ## Getting Started
