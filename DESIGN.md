@@ -25,11 +25,7 @@ The system architecture adheres to these core principles:
 ### High-Level System Diagram
 This diagram shows the major components and their interactions in the observability platform.
 
-![High-Level System Architecture](./high-level-system-diagram.png)
-
-*Figure 1: High-level architecture showing the key components of the API Observability Platform and their interactions.*
-
-
+![High-Level System Architecture](docs/images/high-level-system-diagram.png)
 
 
 ### Architectural Patterns
@@ -81,50 +77,7 @@ The data model is designed around these principles:
 ### Entity Relationship Diagram
 This diagram shows the relationships between different data entities in the system.
 
-```mermaid
-erDiagram
-    API_REQUEST ||--o{ TRACE : generates
-    API_REQUEST ||--o{ METRIC : produces
-    API_REQUEST ||--o{ LOG : creates
-    
-    TRACE {
-        string trace_id
-        string parent_id
-        string span_id
-        timestamp start_time
-        timestamp end_time
-        string service_name
-        json attributes
-    }
-    
-    METRIC {
-        string name
-        string type
-        float value
-        timestamp timestamp
-        json labels
-    }
-    
-    LOG {
-        string log_id
-        timestamp timestamp
-        string level
-        string message
-        string trace_id
-        json metadata
-    }
-    
-    TRACE ||--o{ SPAN : contains
-    SPAN {
-        string span_id
-        string trace_id
-        string parent_span_id
-        string name
-        timestamp start_time
-        timestamp end_time
-        json attributes
-    }
-```
+![Entity Relationship Diagram](docs/images/ER-Diagram.png)
 
 ### Database Selection Logic
 
