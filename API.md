@@ -9,6 +9,7 @@ This document provides detailed information about the API endpoints available in
 4. [Error Handling](#error-handling)
 5. [Rate Limiting](#rate-limiting)
 6. [Example Usage](#example-usage)
+7. [API Design Decisions](#api-design-decisions)
 
 ## Authentication
 
@@ -214,6 +215,17 @@ When an error occurs, the API returns an appropriate HTTP status code along with
 | 422 | VALIDATION_ERROR | Validation error in request data |
 | 429 | RATE_LIMIT_EXCEEDED | Too many requests |
 | 500 | SERVER_ERROR | Internal server error |
+
+### Error Handling Strategy
+
+The API implements a multi-layered error handling approach:
+
+1. **Validation Layer**: Catches and standardizes input validation errors
+2. **Business Logic Layer**: Handles domain-specific errors
+3. **Infrastructure Layer**: Manages system-level errors
+4. **Global Handler**: Ensures consistent formatting for unexpected errors
+
+This approach ensures comprehensive error coverage while maintaining consistency.
 
 ## Rate Limiting
 
