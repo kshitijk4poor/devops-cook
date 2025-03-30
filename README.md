@@ -14,6 +14,34 @@ By implementing the three pillars of observability (metrics, logs, and traces) i
 
 ![High Level System Architecture](docs/images/high-level-system-diagram.png)
 
+## Table of Contents
+
+- [Documentation](#documentation)
+- [Components](#components)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Observability Components](#observability-components)
+  - [1. Metrics with Prometheus & Grafana](#1-metrics-with-prometheus--grafana)
+  - [2. Logging with ELK Stack](#2-logging-with-elk-stack)
+  - [3. Distributed Tracing with OpenTelemetry & Jaeger](#3-distributed-tracing-with-opentelemetry--jaeger)
+  - [4. Unified Observability](#4-unified-observability)
+- [Demo Endpoints](#demo-endpoints)
+- [Future Considerations](#future-considerations)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues](#common-issues)
+  - [Data Not Persisting](#data-not-persisting)
+  - [Performance Issues](#performance-issues)
+- [Security and Production Considerations](#security-and-production-considerations)
+  - [Security Enhancements](#security-enhancements)
+  - [Production Readiness](#production-readiness)
+  - [Compliance Considerations](#compliance-considerations)
+- [Architecture Overview](#architecture-overview)
+- [Core Observability Principles](#core-observability-principles)
+- [Implementation Deep Dive](#implementation-deep-dive)
+- [Why This Approach Works](#why-this-approach-works)
+
 ## Documentation
 
 For detailed information about this platform, please refer to these documentation files:
@@ -35,6 +63,39 @@ For detailed information about this platform, please refer to these documentatio
   - **Elasticsearch**: Log storage and indexing
   - **Logstash**: Log processing pipeline
   - **Kibana**: Log visualization
+
+## Screenshots
+
+### Dashboards
+
+#### Grafana API Overview Dashboard
+![Grafana API Overview Dashboard](docs/images/grafana-api-overview.png)
+*Comprehensive view of API performance metrics and health indicators*
+
+#### Grafana Endpoint Performance Dashboard
+![Grafana Endpoint Performance](docs/images/grafana-endpoint-performance.png)
+*Detailed metrics for individual API endpoints with response times and error rates*
+
+#### Kibana Logs Dashboard
+![Kibana Logs Dashboard](docs/images/kibana-logs.png)
+*Log visualization with filtering and search capabilities*
+
+![Kibana Dashboard](docs/images/kibana-dashboard.png)
+*Kibana dashboard with pre-built dashboards*
+
+### Observability Components
+
+#### Prometheus Metrics Explorer
+![Prometheus UI](docs/images/prometheus-ui.png)
+*Direct query interface for metrics using PromQL*
+
+#### Jaeger Distributed Tracing
+![Jaeger Tracing UI](docs/images/jaeger-tracing-ui.png)
+*Trace visualization showing request flow through system components*
+
+#### Kibana Log Explorer
+![Kibana Log Explorer](docs/images/kibana-log-explorer.png)
+*Detailed log analysis with advanced filtering options*
 
 ## Getting Started
 

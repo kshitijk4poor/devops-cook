@@ -4,6 +4,8 @@ import json
 import logging
 import time
 import uuid
+import socket
+import logging.handlers
 from typing import Callable, Dict, Any
 
 from fastapi import FastAPI, Request, Response
@@ -97,6 +99,46 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             raise
 
 
+class TCPLogstashHandler(logging.handlers.SocketHandler):
+    """Custom handler for sending logs to Logstash via TCP."""
+    
+    def __init__(self, host, port):
+        super().__init__(host, port)
+        self.formatter = logging.Formatter()
+        # Connect immediately to detect connection issues
+        try:
+            self.sock = self.makeSocket()
+            print(f"Successfully created socket connection to {host}:{port}")
+        except Exception as e:
+            print(f"Error creating socket connection to {host}:{port}: {e}")
+            self.sock = None
+    
+    def emit(self, record):
+        try:
+            # Format the record
+            msg = self.format(record)
+            
+            # Ensure it's a valid JSON string
+            if not (msg.startswith('{') and msg.endswith('}')):
+                # If not a valid JSON object, wrap it in a message field
+                msg = json.dumps({"message": msg})
+            
+            # Add a newline for json_lines codec
+            msg = msg + '\n'
+            
+            # Send as bytes
+            if self.sock is None:
+                # Try to recreate the socket if it's None
+                self.sock = self.makeSocket()
+            
+            self.send(msg.encode('utf-8'))
+        except Exception as e:
+            print(f"Error sending log to Logstash: {str(e)}")
+            # Try to reconnect
+            self.sock = None
+            self.handleError(record)
+
+
 def setup_logging() -> None:
     """Configure logging settings based on environment."""
     log_level = logging.DEBUG if settings.DEBUG else logging.INFO
@@ -136,24 +178,40 @@ def setup_logging() -> None:
     for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)
     
+    # Create formatter
+    json_formatter = JsonFormatter()
+    
     # Add console handler
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(JsonFormatter())
+    console_handler.setFormatter(json_formatter)
     root_logger.addHandler(console_handler)
+    
+    # Add TCP logstash handler with more explicit debugging
+    logstash_connected = False
+    try:
+        print(f"Attempting to connect to Logstash on logstash:5000")
+        logstash_handler = TCPLogstashHandler('logstash', 5000)
+        logstash_handler.setFormatter(json_formatter)
+        root_logger.addHandler(logstash_handler)
+        print(f"Successfully connected to Logstash")
+        logstash_connected = True
+    except (socket.error, socket.gaierror) as e:
+        # Log the error but continue if we can't connect to Logstash
+        print(f"Failed to connect to Logstash: {str(e)}")
     
     # Configure API logger
     api_logger = logging.getLogger("api")
     api_logger.setLevel(log_level)
     
     # Log startup message
-    api_logger.info(
-        json.dumps({
-            "event": "application_startup",
-            "environment": settings.ENVIRONMENT,
-            "debug_mode": settings.DEBUG,
-            "version": settings.VERSION,
-        })
-    )
+    startup_msg = {
+        "event": "application_startup",
+        "environment": settings.ENVIRONMENT,
+        "debug_mode": settings.DEBUG,
+        "version": settings.VERSION,
+        "logstash_connected": logstash_connected
+    }
+    api_logger.info(json.dumps(startup_msg))
 
 
 def add_logging_middleware(app: FastAPI) -> None:
