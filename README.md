@@ -23,6 +23,7 @@ For detailed information about this platform, please refer to these documentatio
 - **[Dashboard Guide](DASHBOARD.md)**: Instructions for using and customizing dashboards
 - **[Security Configuration](SECURITY.md)**: Security best practices and configuration guides
 - **[Design Document](DESIGN.md)**: System architecture, data models, and design decisions
+- **[Design Decisions Summary](DESIGN_DECISIONS.md)**: Concise overview of key design decisions, proof of solution, and known gaps
 
 ## Components
 
