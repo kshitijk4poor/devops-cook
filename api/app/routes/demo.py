@@ -718,4 +718,134 @@ async def trace_demo_endpoint(
             "child_spans_created": add_child_spans,
             "events_added": add_events
         },
+    )
+
+
+@router.get(
+    "/random",
+    response_model=DemoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Random Data Endpoint",
+    description="Returns random data for testing.",
+)
+async def random_endpoint() -> DemoResponse:
+    """
+    Random data endpoint for testing.
+    
+    Returns:
+        DemoResponse: Random data response
+    """
+    # Create a span for tracking
+    with tracer.start_as_current_span("random_data_generation") as span:
+        span.set_attribute("endpoint_type", "random")
+        
+        # Generate random data
+        random_data = {
+            "random_number": random.randint(1, 1000),
+            "random_float": random.random(),
+            "random_bool": random.choice([True, False]),
+            "timestamp_ms": time.time() * 1000
+        }
+        
+        # Add random data to span
+        for key, value in random_data.items():
+            span.set_attribute(f"random.{key}", str(value))
+    
+    return DemoResponse(
+        message="Random data generated successfully",
+        timestamp=datetime.now(UTC),
+        endpoint_type="random",
+        data=random_data,
+    )
+
+
+@router.get(
+    "/metrics",
+    response_model=DemoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Metrics Demo Endpoint",
+    description="Returns some mock metrics for demonstration.",
+)
+async def metrics_endpoint() -> DemoResponse:
+    """
+    Metrics demo endpoint.
+    
+    Returns:
+        DemoResponse: Mock metrics data
+    """
+    # Create a span for tracking
+    with tracer.start_as_current_span("metrics_collection") as span:
+        span.set_attribute("endpoint_type", "metrics")
+        
+        # Generate mock metrics
+        metrics_data = {
+            "system": {
+                "cpu_usage": random.uniform(0.1, 0.9),
+                "memory_usage": random.uniform(0.2, 0.8),
+                "disk_usage": random.uniform(0.3, 0.7),
+            },
+            "application": {
+                "requests_per_second": random.randint(10, 100),
+                "average_response_time_ms": random.randint(50, 500),
+                "error_rate": random.uniform(0.01, 0.05),
+            },
+            "database": {
+                "connections": random.randint(5, 20),
+                "queries_per_second": random.randint(5, 50),
+                "average_query_time_ms": random.randint(10, 100),
+            }
+        }
+        
+        # Add an event for metrics collection
+        span.add_event("metrics_collected", {
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+    
+    return DemoResponse(
+        message="System metrics collected",
+        timestamp=datetime.now(UTC),
+        endpoint_type="metrics",
+        data=metrics_data,
+    )
+
+
+@router.post(
+    "/data-echo",
+    response_model=DemoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Data Echo Endpoint",
+    description="Echoes back the data received with a timestamp.",
+)
+async def data_echo_endpoint(request: Request) -> DemoResponse:
+    """
+    Data echo endpoint that returns the data received with a timestamp.
+    
+    Args:
+        request: The incoming request
+        
+    Returns:
+        DemoResponse: Echo response with timestamp
+    """
+    # Create a span for tracking
+    with tracer.start_as_current_span("data_echo_processing") as span:
+        span.set_attribute("endpoint_type", "data_echo")
+        
+        # Try to parse the request body if available
+        try:
+            body = await request.json()
+        except:
+            body = {}
+        
+        # Create response data
+        echo_data = {
+            "received_data": body,
+            "received_at": datetime.now(UTC).isoformat(),
+            "headers": dict(request.headers)
+        }
+    
+    return DemoResponse(
+        message="Data echoed successfully",
+        timestamp=datetime.now(UTC),
+        endpoint_type="data_echo",
+        data=echo_data,
     ) 

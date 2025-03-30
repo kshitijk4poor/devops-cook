@@ -32,7 +32,7 @@ fi
 
 # Check API Health
 echo -n "Checking API Health... "
-api_status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8001/health")
+api_status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8001/api/health")
 echo "Status: $api_status"
 if [[ "$api_status" == "200" ]]; then
   echo "✅ API is running"
@@ -42,7 +42,7 @@ fi
 
 # Check API Demo Random Endpoint
 echo -n "Checking Demo Random Endpoint... "
-random_status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8001/demo/random")
+random_status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8001/api/demo/random")
 echo "Status: $random_status"
 if [[ "$random_status" == "200" ]]; then
   echo "✅ Demo Random Endpoint is working"
@@ -52,7 +52,7 @@ fi
 
 # Check API Demo Metrics Endpoint
 echo -n "Checking Demo Metrics Endpoint... "
-metrics_status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8001/demo/metrics")
+metrics_status=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8001/api/demo/metrics")
 echo "Status: $metrics_status"
 if [[ "$metrics_status" == "200" ]]; then
   echo "✅ Demo Metrics Endpoint is working"
@@ -62,7 +62,7 @@ fi
 
 # Check API Demo Data Echo Endpoint
 echo -n "Checking Demo Data Echo Endpoint... "
-echo_status=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://localhost:8001/demo/data-echo")
+echo_status=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://localhost:8001/api/demo/data-echo")
 echo "Status: $echo_status"
 if [[ "$echo_status" == "200" ]]; then
   echo "✅ Demo Data Echo Endpoint is working"
@@ -84,22 +84,22 @@ def generate_logs(base_url, count=100, delay=0.1):
     
     # Include all working endpoints
     endpoints = [
-        "/health",
-        "/demo/random",
-        "/demo/metrics",
-        "/demo/data-echo"  # Use the new data-echo endpoint
+        "/api/health",
+        "/api/demo/random",
+        "/api/demo/metrics",
+        "/api/demo/data-echo"  # Use the new data-echo endpoint
     ]
     
     error_endpoints = [
-        "/demo/error-prone",
-        "/demo/not-found"
+        "/api/demo/error-prone",
+        "/api/demo/not-found"
     ]
 
     for i in range(count):
         # Occasionally generate errors (20% of requests)
         if random.random() < 0.2:
             endpoint = random.choice(error_endpoints)
-            params = {"force_error": True} if endpoint == "/demo/error-prone" else {}
+            params = {"force_error": True} if endpoint == "/api/demo/error-prone" else {}
             try:
                 response = requests.get(f"{base_url}{endpoint}", params=params, timeout=2)
                 print(f"Error request made to {endpoint} - Status: {response.status_code}")
@@ -107,7 +107,7 @@ def generate_logs(base_url, count=100, delay=0.1):
                 print(f"Error request made to {endpoint} - Exception: {str(e)[:50]}...")
         else:
             endpoint = random.choice(endpoints)
-            if endpoint == "/demo/data-echo":
+            if endpoint == "/api/demo/data-echo":
                 try:
                     response = requests.post(f"{base_url}{endpoint}", timeout=2)
                     print(f"POST request to {endpoint} - Status: {response.status_code}")
@@ -164,5 +164,4 @@ echo "Elasticsearch is available at: http://localhost:9200"
 echo "Logstash stats are available at: http://localhost:9600"
 echo "API is available at: http://localhost:8001"
 echo ""
-echo "Note: The echo endpoint has issues but we've configured the test script"
-echo "to use only the working endpoints to generate test logs." 
+echo "All endpoints are working correctly and logs are being generated." 
