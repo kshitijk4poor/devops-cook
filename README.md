@@ -12,6 +12,8 @@ This platform addresses critical challenges in modern API development and operat
 
 By implementing the three pillars of observability (metrics, logs, and traces) in a unified platform, teams can quickly identify, diagnose, and resolve issues in complex distributed systems.
 
+![High Level System Architecture](docs/images/high-level-system-diagram.png)
+
 ## Documentation
 
 For detailed information about this platform, please refer to these documentation files:
