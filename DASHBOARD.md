@@ -344,7 +344,6 @@ This panel shows the Application Performance Index score:
   ```
 - **Visualization**: Stat panel with thresholds
 - **Use Case**: Provide a standardized measure of user satisfaction
-- **Expert Insight**: Understanding Apdex score helps track user satisfaction
 
 ### Exporting and Importing Dashboards
 

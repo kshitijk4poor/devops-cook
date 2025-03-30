@@ -25,41 +25,12 @@ The system architecture adheres to these core principles:
 ### High-Level System Diagram
 This diagram shows the major components and their interactions in the observability platform.
 
-```mermaid
-graph TB
-    subgraph Client Layer
-        client[API Clients]
-    end
+![High-Level System Architecture](./high-level-system-diagram.png)
 
-    subgraph API Layer
-        api[FastAPI Application]
-        otel[OpenTelemetry SDK]
-    end
+*Figure 1: High-level architecture showing the key components of the API Observability Platform and their interactions.*
 
-    subgraph Metrics
-        prom[Prometheus]
-        grafana[Grafana Dashboards]
-    end
 
-    subgraph Logging
-        elastic[Elasticsearch]
-        logstash[Logstash]
-        kibana[Kibana]
-    end
 
-    subgraph Tracing
-        jaeger[Jaeger]
-    end
-
-    client --> api
-    api --> otel
-    otel --> jaeger
-    api --> logstash
-    logstash --> elastic
-    elastic --> kibana
-    api --> prom
-    prom --> grafana
-```
 
 ### Architectural Patterns
 
