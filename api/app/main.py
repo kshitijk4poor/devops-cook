@@ -51,7 +51,7 @@ def create_application() -> FastAPI:
         setup_tracing(
             application,
             service_name=settings.APP_NAME,
-            excluded_endpoints=["/metrics", "/health"]
+            excluded_endpoints=["/metrics"]  # Remove /health from excluded endpoints
         )
     
     # Include routers

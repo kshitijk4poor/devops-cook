@@ -18,9 +18,16 @@ services:
       - JAEGER_PORT=6831
       - OTEL_TRACES_ENABLED=true
       - OTEL_SAMPLER=always_on
+      - OTEL_SERVICE_NAME=api-service
+      - OTEL_EXPORTER_JAEGER_AGENT_HOST=jaeger
+      - OTEL_EXPORTER_JAEGER_AGENT_PORT=6831
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=api-service
+      - OTEL_PYTHON_JAEGER_AGENT_HOST=jaeger
+      - OTEL_PYTHON_JAEGER_AGENT_PORT=6831
+      - OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=""  # Enable all instrumentations
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.35
     ports:
       - "5775:5775/udp"
       - "6831:6831/udp"
@@ -32,6 +39,7 @@ services:
       - "9411:9411"
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=9411
+      - JAEGER_AGENT_PORT=6831
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://localhost:16686"]
       interval: 5s

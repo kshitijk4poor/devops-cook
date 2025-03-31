@@ -88,6 +88,8 @@ For detailed information about this platform, please refer to these documentatio
 ![Jaeger Tracing UI](docs/images/jaeger.png)
 *Trace visualization showing request flow through system components*
 
+![Jaeger API call graph span](docs/images/jaeger-span.png)
+*API call graph span demonstrating what other calls were made within the api for better tracing*
 #### Kibana Log Explorer
 ![Kibana Logs Dashboard](docs/images/kibana-logs.png)
 *Detailed log analysis with advanced filtering options*
