@@ -79,6 +79,21 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                 })
             )
             
+            # Log errors for 5xx status codes
+            if status_code >= 500:
+                logger.error(
+                    json.dumps({
+                        "event": "server_error",
+                        "request_id": request_id,
+                        "path": path,
+                        "method": method,
+                        "status_code": status_code,
+                        "duration": duration,
+                        "timestamp": time.time(),
+                        "error": f"Server error: HTTP {status_code}"
+                    })
+                )
+            
             return response
         except Exception as e:
             # Calculate request duration
@@ -186,18 +201,18 @@ def setup_logging() -> None:
     console_handler.setFormatter(json_formatter)
     root_logger.addHandler(console_handler)
     
-    # Add TCP logstash handler with more explicit debugging
+    # Add TCP logstash handler with improved connection handling
     logstash_connected = False
     try:
         print(f"Attempting to connect to Logstash on logstash:5000")
         logstash_handler = TCPLogstashHandler('logstash', 5000)
         logstash_handler.setFormatter(json_formatter)
         root_logger.addHandler(logstash_handler)
-        print(f"Successfully connected to Logstash")
+        print(f"Successfully added Logstash handler to logger")
         logstash_connected = True
-    except (socket.error, socket.gaierror) as e:
+    except Exception as e:
         # Log the error but continue if we can't connect to Logstash
-        print(f"Failed to connect to Logstash: {str(e)}")
+        print(f"Failed to set up Logstash handler: {str(e)}")
     
     # Configure API logger
     api_logger = logging.getLogger("api")

@@ -11,7 +11,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "Prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -89,7 +89,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "editorMode": "code",
           "expr": "rate(http_requests_total[5m])",
@@ -104,7 +104,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "Prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -153,7 +153,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "editorMode": "code",
           "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m]))",
@@ -168,7 +168,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "Prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -246,7 +246,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "editorMode": "code",
           "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])",

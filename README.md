@@ -69,12 +69,10 @@ For detailed information about this platform, please refer to these documentatio
 ### Dashboards
 
 #### Grafana API Overview Dashboard
-![Grafana API Overview Dashboard](docs/images/grafana-api-overview.png)
+![Grafana API Overview Dashboard](docs/images/grafana-dashboard.png)
 *Comprehensive view of API performance metrics and health indicators*
 
-#### Grafana Endpoint Performance Dashboard
-![Grafana Endpoint Performance](docs/images/grafana-endpoint-performance.png)
-*Detailed metrics for individual API endpoints with response times and error rates*
+
 
 #### Kibana Logs Dashboard
 ![Kibana Dashboard](docs/images/kibana-dashboard.png)
